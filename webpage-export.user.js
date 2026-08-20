@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         网页导出 (Export Page to Markdown/HTML)
 // @namespace    https://wps.cn/userscripts/page-export
-// @version      2.5.3
+// @version      2.5.4
 // @description  在任意页面点击 Tampermonkey 菜单，导出正文为干净 Markdown/HTML。Readability 提取正文+元数据（标题/作者/摘要/站点/时间），keepClasses 保留代码语言与数学公式，Turndown 转换。
 // @author       灵犀
 // @license      MIT
@@ -235,7 +235,10 @@
 
     function exportMarkdown() {
         const art = getArticle();
-        if (!art) return;
+        if (!art) {
+            alert(`${NAME} 未能识别到可导出的文章正文。请打开单篇帖子/文章详情页后再导出（当前可能为列表页/首页）。`);
+            return;
+        }
         const title = art.meta.title || pageTitle();
         const body = toMD(art.dom).replace(/\n{3,}/g, '\n\n').trim();
         const md = `# ${title}\n\n${mdMeta(art.meta)}\n\n---\n\n${body}\n`;
@@ -244,7 +247,10 @@
 
     function exportHTML() {
         const art = getArticle();
-        if (!art) return;
+        if (!art) {
+            alert(`${NAME} 未能识别到可导出的文章正文。请打开单篇帖子/文章详情页后再导出（当前可能为列表页/首页）。`);
+            return;
+        }
         const title = art.meta.title || pageTitle();
         // 移除中间标记（data-task 已删；保留 class 供 MathJax/代码高亮渲染）
         const clean = art.dom;
