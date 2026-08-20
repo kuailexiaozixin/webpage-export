@@ -17,6 +17,8 @@
   - `javascript:` 伪协议链接过滤
   - MathJax / KaTeX 数学公式、复杂表格保留为 HTML
 - **单一路径**：无模式分叉，代码简洁可维护。
+- **原生保存对话框**：用浏览器 File System Access API（`showSaveFilePicker`）弹出系统保存对话框，可自选目录/文件名。
+- **记忆上次保存目录**：通过 IndexedDB 持久化目录句柄，后续导出直接写入上次目录，免重复选位置。
 
 ## 安装
 
@@ -51,6 +53,12 @@
 - `keepClasses: true` 保留代码语言、MathJax class，使数学公式与复杂表格在导出后得以保留。
 - 任务列表 checkbox 在 Readability 前用 `data-task` 中转保护，提取后恢复。
 - 懒加载图片 `data-src`/`data-original` 优先覆盖占位 `src`。
+
+### 保存机制
+
+- **唯一保存路径**：`showSaveFilePicker`（File System Access API）。不保留旧的 `a[download]` 静默下载回退（避免路线分叉与死代码）。
+- **记忆目录**：首次保存后通过 `getParent()` 记忆父目录句柄到 IndexedDB，之后导出优先直接写入该目录（`queryPermission`/`getFileHandle`/`createWritable`），免弹窗。
+- **兼容性**：需 Chrome/Edge 86+ 且 HTTPS 安全上下文；Firefox/Safari 或 http 页面不支持（会提示）。
 
 ## License
 
